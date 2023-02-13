@@ -1,10 +1,10 @@
 #  飞书
-APP_ID: cli_axxx
-APP_SECRET: xxx
-APP_ENCRYPT_KEY: xxx
-APP_VERIFICATION_TOKEN: xxx
+APP_ID: cli_a363b385a475100b
+APP_SECRET: RoFODMofCj3BFHnzeuLTqeVk7K8WvX3p
+APP_ENCRYPT_KEY: 
+APP_VERIFICATION_TOKEN: dlw2dJKiRYAsiFEwlPcq88kZkBDjqgwl
 # 请确保和飞书应用管理平台中的设置一致 
 BOT_NAME: chatGpt
 # openAI
-OPENAI_KEY: sk-xxx
+OPENAI_KEY: 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
 
