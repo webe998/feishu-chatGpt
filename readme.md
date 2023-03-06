@@ -1,6 +1,6 @@
 
 <p align='center'>
-  <img src='./docs/image.png' alt='' width='800'/>
+    <img src='./docs/img3.png' alt='' width='800'/>
 </p>
 
 <br>
@@ -14,23 +14,25 @@
 
 ## 👻 机器人功能
 
-- [x] 支持私人对话
-- [x] 支持群聊@机器人回复
-- [x] 持续对话联系上下文
-- [x] 超时自动结束对话
-- [x] 用户主动开启新对话
-- [ ] 对接[prompts](https://github.com/f/awesome-chatgpt-prompts),允许自定义交流场景
-- [ ] markdown格式回复，重点支持代码场景
+- 🗣 畅所欲言，直接语音交流 🚧
+- 💬 私人和群聊支持多话题同时对话，让讨论更加连贯和高效
+- 🔄 持续对话联系上下文，回复对话框即可继续同一话题讨论
+- ⏰ 超时自动结束对话，同时支持清除讨论历史
+- 📝 支持富文本卡片回复，让信息更加丰富多彩
+- 👍 交互式反馈提醒，及时获取机器人处理结果
+- 🎭 支持角色扮演的场景模式，为讨论增添乐趣和创意
+- 🏞 内置丰富的场景预设，让用户更方便地管理场景  🚧
+- 🔙 轻松恢复历史话题，继续讨论  🚧
+- 🖼 支持根据文本生成图片，增强信息呈现效果  🚧
+- 🔒 内置管理员模式，使用更加安全可靠 🚧
 
 
 <p align='center'>
-    <img src='./docs/image2.png' alt='' width='800'/>
+    <img src='./docs/help.png' alt='' width='600'/>
 </p>
 
-
-
 ## 🌟 项目特点
-- 🍏 基于 OpenAI-[Gpt3](https://platform.openai.com/account/api-keys) 接口
+- 🍏 基于 OpenAI-[gpt-3.5-turbo](https://platform.openai.com/account/api-keys) 接口
 - 🍎 通过 lark，将 ChatGPT 接入[飞书](https://open.feishu.cn/app)
 - 🥒 支持[Serverless云函数](https://github.com/serverless-devs/serverless-devs)、[本地环境](https://dashboard.cpolar.com/login)、[Docker](https://www.docker.com/) 多种渠道部署
 - 🍋 基于[goCache](https://github.com/patrickmn/go-cache)内存键值对缓存
@@ -39,15 +41,13 @@
 ## 项目部署
 
 
-######  有关飞书具体的配置文件说明，**[➡︎ 点击查看](#详细配置步骤)**
+######  有关飞书的配置文件说明，**[➡︎ 点击查看](#详细配置步骤)**
 
 
 ``` bash
-git clone git@github.com:Leizhenpeng/feishu-chatGpt.git
-cd feishu-chatGpt/code
+git clone git@github.com:Leizhenpeng/feishu-chatgpt.git
+cd feishu-chatgpt/code
 
-# 配置config.yaml
-mv config.example.yaml config.yaml
 ```
 <details>
     <summary>本地部署</summary>
@@ -61,6 +61,9 @@ mv config.example.yaml config.yaml
 
 
 ```bash
+# 配置config.yaml
+mv config.example.yaml config.yaml
+
 //测试部署
 go run main.go
 cpolar http 9000
@@ -84,11 +87,14 @@ kill -9 PID
 
 
 <details>
-    <summary>serverless云函数部署</summary>
+    <summary>serverless云函数(阿里云等)部署</summary>
 <br>
 
 安装[severless](https://docs.serverless-devs.com/serverless-devs/quick_start)工具
 ```bash
+# 配置config.yaml
+mv config.example.yaml config.yaml
+# 安装severless cli
 npm install @serverless-devs/s -g
 ```
 一键部署
@@ -108,13 +114,36 @@ s deploy
 <br>
 
 ``` bash
-# 配置config.yaml
-mv config.example.yaml config.yaml
-# 构建运行
-cd ..
 docker build -t feishu-chatgpt:latest .
-docker run -d --name feishu-chatgpt -p 9000:9000 feishu-chatgpt:latest
+docker run -d --name feishu-chatgpt -p 9000:9000 \
+--env APP_ID=xxx \
+--env APP_SECRET=xxx \
+--env APP_ENCRYPT_KEY=xxx \
+--env APP_VERIFICATION_TOKEN=xxx \
+--env BOT_NAME=chatGpt \
+--env OPENAI_KEY=sk-xxx \
+feishu-chatgpt:latest
 ```
+------------
+
+小白简易化docker部署
+
+- docker地址: https://hub.docker.com/r/leizhenpeng/feishu-chatgpt
+``` bash
+docker run -d --restart=always --name feishu-chatgpt2 -p 9000:9000 -v /etc/localtime:/etc/localtim:ro  \
+--env APP_ID=xxx \
+--env APP_SECRET=xxx \
+--env APP_ENCRYPT_KEY=xxx \
+--env APP_VERIFICATION_TOKEN=xxx \
+--env BOT_NAME=chatGpt \
+--env OPENAI_KEY=sk-xxx \
+dockerproxy.com/leizhenpeng/feishu-chatgpt:latest
+```
+
+事件回调地址: http://IP:9000/webhook/event
+卡片回调地址: http://IP:9000/webhook/card
+
+把它填入飞书后台
 <br>
 
 </details>
@@ -129,7 +158,11 @@ docker run -d --name feishu-chatgpt -p 9000:9000 feishu-chatgpt:latest
         - `http://xxxx.r6.cpolar.top`为cpolar暴露的公网地址
         - `/webhook/event`为统一的应用路由
         - 最终的回调地址为 `http://xxxx.r6.cpolar.top/webhook/event`
-    4. 给订阅添加下列回调事件
+    4. 在飞书机器人后台的 `机器人` 板块，填写消息卡片请求网址。例如，
+        - `http://xxxx.r6.cpolar.top`为cpolar暴露的公网地址
+        - `/webhook/card`为统一的应用路由
+        - 最终的消息卡片请求网址为 `http://xxxx.r6.cpolar.top/webhook/card`
+    5. 给订阅添加下列回调事件
         - im:message
         - im:message.group_at_msg(获取群组中所有消息)
         - im:message.group_at_msg:readonly(接收群聊中@机器人消息事件)
@@ -143,21 +176,11 @@ docker run -d --name feishu-chatgpt -p 9000:9000 feishu-chatgpt:latest
 更多介绍，参考[飞书上的小计算器: Go机器人来啦](https://www.bilibili.com/video/BV12M41187rV/)
 
 
-
-### 相关阅读
-
-- [go-cache](https://github.com/patrickmn/go-cache)
-
-- [在Go语言项目中使用Zap日志库](https://www.liwenzhou.com/posts/Go/zap/)
-
-- [飞书 User_ID、Open_ID 与 Union_ID 区别](https://www.feishu.cn/hc/zh-CN/articles/794300086214)
-
-- [飞书重复接受到消息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/events/receive)
-
-
 ### 更多交流
 
-可以加入飞书群~
+企业如需定制部署，可联系WeChat: `laolei_forkway`，支持发票~
+
+遇到其他问题，可以加入飞书群沟通~
 <p align='center'>
   <img src='./docs/talk.png' alt='' width='300' align='left'/>
 </p>
